@@ -1,5 +1,8 @@
         // Enhanced JavaScript functionality
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize shopping cart
+            initializeShoppingCart();
+            
             // Create particle system
             createParticleSystem();
             
@@ -98,33 +101,103 @@
                 });
             });
             
-            // Contact form handling
+            // Enhanced contact form handling
             const contactForm = document.querySelector('.contact-form');
             if (contactForm) {
                 contactForm.addEventListener('submit', function(e) {
                     e.preventDefault();
                     
-                    // Simple form validation and submission simulation
+                    // Get form data
                     const formData = new FormData(this);
-                    const name = formData.get('name');
-                    const email = formData.get('email');
-                    const message = formData.get('message');
+                    const name = formData.get('name').trim();
+                    const email = formData.get('email').trim();
+                    const phone = formData.get('phone').trim();
+                    const message = formData.get('message').trim();
                     
-                    if (name && email && message) {
-                        // Simulate form submission
-                        showNotification('Thank you! Your message has been sent successfully.', 'success');
-                        this.reset();
-                    } else {
-                        showNotification('Please fill in all required fields.', 'error');
+                    // Enhanced validation
+                    const errors = [];
+                    
+                    if (!name || name.length < 2) {
+                        errors.push('Name must be at least 2 characters long');
                     }
+                    
+                    if (!email || !isValidEmail(email)) {
+                        errors.push('Please enter a valid email address');
+                    }
+                    
+                    if (phone && !isValidPhone(phone)) {
+                        errors.push('Please enter a valid phone number');
+                    }
+                    
+                    if (!message || message.length < 10) {
+                        errors.push('Message must be at least 10 characters long');
+                    }
+                    
+                    if (errors.length > 0) {
+                        showNotification(errors.join('\n'), 'error');
+                        return;
+                    }
+                    
+                    // Simulate form submission with loading state
+                    const submitBtn = this.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.innerHTML;
+                    submitBtn.innerHTML = '<span>Sending...</span>';
+                    submitBtn.disabled = true;
+                    
+                    // Simulate API call
+                    setTimeout(() => {
+                        showNotification('Thank you! Your message has been sent successfully. We\'ll get back to you soon.', 'success');
+                        this.reset();
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                        
+                        // Reset form labels
+                        this.querySelectorAll('.form-group input, .form-group textarea').forEach(input => {
+                            input.classList.remove('has-value');
+                        });
+                    }, 2000);
+                });
+                
+                // Add floating label functionality
+                contactForm.querySelectorAll('input, textarea').forEach(input => {
+                    input.addEventListener('focus', function() {
+                        this.parentElement.classList.add('focused');
+                    });
+                    
+                    input.addEventListener('blur', function() {
+                        this.parentElement.classList.remove('focused');
+                        if (this.value.trim()) {
+                            this.classList.add('has-value');
+                        } else {
+                            this.classList.remove('has-value');
+                        }
+                    });
+                    
+                    input.addEventListener('input', function() {
+                        if (this.value.trim()) {
+                            this.classList.add('has-value');
+                        } else {
+                            this.classList.remove('has-value');
+                        }
+                    });
                 });
             }
             
-            // Add to cart functionality
+            // Enhanced add to cart functionality
             document.querySelectorAll('.add-to-cart').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const menuItem = this.closest('.menu-item');
                     const itemName = menuItem.querySelector('h3').textContent;
+                    const priceText = menuItem.querySelector('.price-tag').textContent;
+                    const price = parseFloat(priceText.replace(/[^\d.]/g, ''));
+                    
+                    // Add item to cart
+                    addToCart({
+                        id: Date.now(), // Simple ID generation
+                        name: itemName,
+                        price: price,
+                        quantity: 1
+                    });
                     
                     // Animate button
                     this.style.transform = 'scale(0.95)';
@@ -151,6 +224,184 @@
             animateCounters();
         });
         
+        // Shopping Cart System
+        let shoppingCart = [];
+
+        function initializeShoppingCart() {
+            // Load cart from localStorage
+            const savedCart = localStorage.getItem('parkTimeCart');
+            if (savedCart) {
+                shoppingCart = JSON.parse(savedCart);
+            }
+            
+            // Create cart icon in navbar
+            createCartIcon();
+            updateCartDisplay();
+        }
+
+        function createCartIcon() {
+            const navMenu = document.querySelector('.nav-menu');
+            const cartItem = document.createElement('li');
+            cartItem.className = 'nav-item cart-item';
+            cartItem.innerHTML = `
+                <a href="#" class="cart-icon" id="cartIcon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                    <span class="cart-count" id="cartCount">0</span>
+                </a>
+            `;
+            
+            // Insert before the last item (login button)
+            navMenu.insertBefore(cartItem, navMenu.lastElementChild);
+            
+            // Add cart modal functionality
+            document.getElementById('cartIcon').addEventListener('click', function(e) {
+                e.preventDefault();
+                showCartModal();
+            });
+        }
+
+        function addToCart(item) {
+            const existingItem = shoppingCart.find(cartItem => cartItem.name === item.name);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                shoppingCart.push(item);
+            }
+            
+            // Save to localStorage
+            localStorage.setItem('parkTimeCart', JSON.stringify(shoppingCart));
+            updateCartDisplay();
+        }
+
+        function updateCartDisplay() {
+            const cartCount = document.getElementById('cartCount');
+            const totalItems = shoppingCart.reduce((total, item) => total + item.quantity, 0);
+            cartCount.textContent = totalItems;
+            
+            // Add animation if items were added
+            if (totalItems > 0) {
+                cartCount.style.transform = 'scale(1.2)';
+                setTimeout(() => {
+                    cartCount.style.transform = 'scale(1)';
+                }, 200);
+            }
+        }
+
+        function showCartModal() {
+            // Create cart modal
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay cart-modal';
+            modal.id = 'cartModal';
+            
+            const total = shoppingCart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            modal.innerHTML = `
+                <div class="modal-container cart-container">
+                    <div class="modal-header">
+                        <h2>Shopping Cart</h2>
+                        <button class="modal-close" id="closeCartModal">&times;</button>
+                    </div>
+                    <div class="cart-content">
+                        ${shoppingCart.length === 0 ? 
+                            '<p class="empty-cart">Your cart is empty. Add some delicious coffee!</p>' :
+                            shoppingCart.map(item => `
+                                <div class="cart-item-row">
+                                    <div class="cart-item-info">
+                                        <h4>${item.name}</h4>
+                                        <p>₱${item.price.toFixed(2)}</p>
+                                    </div>
+                                    <div class="cart-item-controls">
+                                        <button class="quantity-btn" onclick="updateQuantity(${item.id}, -1)">-</button>
+                                        <span class="quantity">${item.quantity}</span>
+                                        <button class="quantity-btn" onclick="updateQuantity(${item.id}, 1)">+</button>
+                                        <button class="remove-btn" onclick="removeFromCart(${item.id})">×</button>
+                                    </div>
+                                </div>
+                            `).join('')
+                        }
+                    </div>
+                    ${shoppingCart.length > 0 ? `
+                        <div class="cart-footer">
+                            <div class="cart-total">
+                                <strong>Total: ₱${total.toFixed(2)}</strong>
+                            </div>
+                            <button class="checkout-btn" onclick="checkout()">Proceed to Checkout</button>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // Close modal functionality
+            document.getElementById('closeCartModal').addEventListener('click', () => {
+                closeCartModal();
+            });
+            
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeCartModal();
+                }
+            });
+        }
+
+        function closeCartModal() {
+            const modal = document.getElementById('cartModal');
+            if (modal) {
+                modal.classList.remove('active');
+                setTimeout(() => {
+                    if (modal.parentNode) {
+                        modal.parentNode.removeChild(modal);
+                    }
+                }, 300);
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        // Make these functions globally accessible for inline onclick handlers
+        window.updateQuantity = function(itemId, change) {
+            const item = shoppingCart.find(cartItem => cartItem.id === itemId);
+            if (item) {
+                item.quantity += change;
+                if (item.quantity <= 0) {
+                    window.removeFromCart(itemId);
+                } else {
+                    localStorage.setItem('parkTimeCart', JSON.stringify(shoppingCart));
+                    updateCartDisplay();
+                    showCartModal(); // Refresh modal
+                }
+            }
+        };
+
+        window.removeFromCart = function(itemId) {
+            shoppingCart = shoppingCart.filter(item => item.id !== itemId);
+            localStorage.setItem('parkTimeCart', JSON.stringify(shoppingCart));
+            updateCartDisplay();
+            showCartModal(); // Refresh modal
+        };
+
+        window.checkout = function() {
+            if (shoppingCart.length === 0) {
+                showNotification('Your cart is empty!', 'error');
+                return;
+            }
+            
+            // Clear cart
+            shoppingCart = [];
+            localStorage.removeItem('parkTimeCart');
+            updateCartDisplay();
+            closeCartModal();
+            
+            showNotification('Order placed successfully! Thank you for choosing Park-Time Coffee.', 'success');
+        };
+        
         // Modal functionality
         document.addEventListener('DOMContentLoaded', function() {
             const loginBtn = document.getElementById('loginBtn');
@@ -162,6 +413,16 @@
             const switchToLogin = document.getElementById('switchToLogin');
             const loginForm = document.getElementById('loginForm');
             const signupForm = document.getElementById('signupForm');
+            const forgotPasswordBtn = document.getElementById('forgotPasswordBtn');
+            const forgotPasswordModal = document.getElementById('forgotPasswordModal');
+            const closeForgotPasswordModal = document.getElementById('closeForgotPasswordModal');
+            const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+            const backToLogin = document.getElementById('backToLogin');
+
+            // Debug: Check if all elements are found
+            console.log('Login form found:', !!loginForm);
+            console.log('Signup form found:', !!signupForm);
+            console.log('Forgot password form found:', !!forgotPasswordForm);
 
             // Open login modal
             loginBtn.addEventListener('click', function(e) {
@@ -178,6 +439,7 @@
 
             closeLoginModal.addEventListener('click', () => closeModal(loginModal));
             closeSignupModal.addEventListener('click', () => closeModal(signupModal));
+            closeForgotPasswordModal.addEventListener('click', () => closeModal(forgotPasswordModal));
 
             // Close modal when clicking outside
             loginModal.addEventListener('click', function(e) {
@@ -189,6 +451,12 @@
             signupModal.addEventListener('click', function(e) {
                 if (e.target === signupModal) {
                     closeModal(signupModal);
+                }
+            });
+
+            forgotPasswordModal.addEventListener('click', function(e) {
+                if (e.target === forgotPasswordModal) {
+                    closeModal(forgotPasswordModal);
                 }
             });
 
@@ -211,16 +479,50 @@
                 }, 300);
             });
 
-            // Handle form submissions
+            // Forgot password functionality
+            forgotPasswordBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                closeModal(loginModal);
+                setTimeout(() => {
+                    forgotPasswordModal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                }, 300);
+            });
+
+            backToLogin.addEventListener('click', function(e) {
+                e.preventDefault();
+                closeModal(forgotPasswordModal);
+                setTimeout(() => {
+                    loginModal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                }, 300);
+            });
+
+            // Enhanced login form handling
             loginForm.addEventListener('submit', function(e) {
                 e.preventDefault();
-                const email = document.getElementById('loginEmail').value;
+                console.log('Login form submitted'); // Debug log
+                
+                const email = document.getElementById('loginEmail').value.trim();
                 const password = document.getElementById('loginPassword').value;
                 const remember = document.querySelector('input[name="remember"]').checked;
 
-                // Add your login logic here
-                console.log('Login attempt:', { email, password, remember });
+                // Enhanced validation
+                const errors = [];
                 
+                if (!email || !isValidEmail(email)) {
+                    errors.push('Please enter a valid email address');
+                }
+                
+                if (!password || password.length < 6) {
+                    errors.push('Password must be at least 6 characters long');
+                }
+                
+                if (errors.length > 0) {
+                    showNotification(errors.join('\n'), 'error');
+                    return;
+                }
+
                 // Simulate login process
                 const submitBtn = loginForm.querySelector('.auth-submit-btn');
                 const originalText = submitBtn.innerHTML;
@@ -229,25 +531,64 @@
 
                 setTimeout(() => {
                     // Simulate successful login
-                    alert('Login successful! Welcome back to Park-Time Coffee.');
+                    showNotification('Login successful! Welcome back to Park-Time Coffee.', 'success');
                     closeModal(loginModal);
                     submitBtn.innerHTML = originalText;
                     submitBtn.disabled = false;
                     loginForm.reset();
+                    
+                    // Update login button to show user is logged in
+                    const loginBtn = document.getElementById('loginBtn');
+                    loginBtn.textContent = 'Welcome!';
+                    loginBtn.style.background = 'var(--coffee-gradient)';
                 }, 2000);
             });
 
+            // Enhanced signup form handling
             signupForm.addEventListener('submit', function(e) {
                 e.preventDefault();
+                console.log('Signup form submitted'); // Debug log
+                
                 const formData = new FormData(signupForm);
                 const data = Object.fromEntries(formData);
-
-                // Add your signup logic here
-                console.log('Signup attempt:', data);
-
-                // Validate password match
+                
+                console.log('Form data:', data); // Debug log
+                
+                // Enhanced validation
+                const errors = [];
+                
+                if (!data.firstName || data.firstName.trim().length < 2) {
+                    errors.push('First name must be at least 2 characters long');
+                }
+                
+                if (!data.lastName || data.lastName.trim().length < 2) {
+                    errors.push('Last name must be at least 2 characters long');
+                }
+                
+                if (!data.email || !isValidEmail(data.email)) {
+                    errors.push('Please enter a valid email address');
+                }
+                
+                if (data.phone && !isValidPhone(data.phone)) {
+                    errors.push('Please enter a valid phone number');
+                }
+                
+                if (!data.password || data.password.length < 8) {
+                    errors.push('Password must be at least 8 characters long');
+                }
+                
                 if (data.password !== data.confirmPassword) {
-                    alert('Passwords do not match!');
+                    errors.push('Passwords do not match');
+                }
+                
+                if (!data.terms) {
+                    errors.push('You must agree to the Terms of Service and Privacy Policy');
+                }
+                
+                console.log('Validation errors:', errors); // Debug log
+                
+                if (errors.length > 0) {
+                    showNotification(errors.join('\n'), 'error');
                     return;
                 }
 
@@ -259,11 +600,17 @@
 
                 setTimeout(() => {
                     // Simulate successful signup
-                    alert('Account created successfully! Welcome to Park-Time Coffee.');
+                    showNotification('Account created successfully! Welcome to Park-Time Coffee.', 'success');
                     closeModal(signupModal);
                     submitBtn.innerHTML = originalText;
                     submitBtn.disabled = false;
                     signupForm.reset();
+                    
+                    // Switch to login modal
+                    setTimeout(() => {
+                        loginModal.classList.add('active');
+                        document.body.style.overflow = 'hidden';
+                    }, 500);
                 }, 2000);
             });
 
@@ -272,9 +619,68 @@
                 if (e.key === 'Escape') {
                     if (loginModal.classList.contains('active')) {
                         closeModal(loginModal);
-                    } else if (signupModal.classList.contains('active')) {
-                        closeModal(signupModal);
-                    }
+                                    } else if (signupModal.classList.contains('active')) {
+                    closeModal(signupModal);
+                } else if (forgotPasswordModal.classList.contains('active')) {
+                    closeModal(forgotPasswordModal);
+                } else if (document.getElementById('cartModal')?.classList.contains('active')) {
+                    closeCartModal();
+                }
+                }
+            });
+            
+            // Forgot password form handling
+            forgotPasswordForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const email = document.getElementById('forgotPasswordEmail').value.trim();
+
+                if (!email || !isValidEmail(email)) {
+                    showNotification('Please enter a valid email address', 'error');
+                    return;
+                }
+
+                const submitBtn = forgotPasswordForm.querySelector('.auth-submit-btn');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<span>Sending...</span>';
+                submitBtn.disabled = true;
+
+                setTimeout(() => {
+                    showNotification('Password reset link sent! Check your email for instructions.', 'success');
+                    closeModal(forgotPasswordModal);
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                    forgotPasswordForm.reset();
+                }, 2000);
+            });
+
+            // Add floating label functionality to auth forms
+            [loginForm, signupForm, forgotPasswordForm].forEach(form => {
+                if (form) {
+                    console.log('Setting up floating labels for form:', form.id);
+                    form.querySelectorAll('input, textarea').forEach(input => {
+                        input.addEventListener('focus', function() {
+                            this.parentElement.classList.add('focused');
+                        });
+                        
+                        input.addEventListener('blur', function() {
+                            this.parentElement.classList.remove('focused');
+                            if (this.value.trim()) {
+                                this.classList.add('has-value');
+                            } else {
+                                this.classList.remove('has-value');
+                            }
+                        });
+                        
+                        input.addEventListener('input', function() {
+                            if (this.value.trim()) {
+                                this.classList.add('has-value');
+                            } else {
+                                this.classList.remove('has-value');
+                            }
+                        });
+                    });
+                } else {
+                    console.log('Form not found for floating labels setup');
                 }
             });
         });
@@ -430,3 +836,14 @@
                 });
             }, 500);
         });
+
+        // Utility functions
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        function isValidPhone(phone) {
+            const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
+            return phoneRegex.test(phone.replace(/[\s\-\(\)]/g, ''));
+        }

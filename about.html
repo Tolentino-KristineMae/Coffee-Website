@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Park-Time Coffee</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="particle-container"></div>
+    
+    <header>
+        <nav class="navbar">
+            <a href="index.html" class="nav-branding">
+                <div class="logo-container"></div>
+                <span>Park-Time Coffee</span>
+            </a>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+                <li class="nav-item"><a href="menu.html" class="nav-link">Menu</a></li>
+                <li class="nav-item"><a href="about.html" class="nav-link">About</a></li>
+                <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
+                <li class="nav-item"><a href="menu.html" class="order-btn">Order Now</a></li>
+                <li class="nav-item"><a href="#" class="login-btn" id="loginBtn">Login</a></li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="about" class="about-section">
+            <div class="section-container about-grid">
+                <div class="about-content slide-in-left">
+                    <h2 class="section-title">Crafting Excellence</h2>
+                    <p>At Park-Time Coffee, excellence isn't just an aspiration — it's our unwavering commitment. Our journey begins far beyond our café walls, in the lush highlands and fertile valleys where the world's most exceptional coffee beans are carefully cultivated by dedicated farmers who share our passion for quality, sustainability, and ethical practices.</p>
+                    
+                    <p>Every bean tells a story of care and respect for the land, and once in our hands, these precious beans undergo a transformation guided by both scientific precision and artistic intuition. Our master roasters apply time-honored techniques, refined over years of dedicated practice, while embracing cutting-edge innovations that enhance flavor profiles and ensure consistency.</p>
+                    
+                    <p>Each roast is meticulously profiled to reveal the bean's unique character — from subtle floral notes to deep cocoa undertones, from bright citrus finishes to rich, earthy depths. Every element is brought to life in perfect harmony, creating a symphony of flavors in every cup.</p>
+                    
+                    <div class="about-features">
+                        <div class="feature-item">
+                            <div class="feature-icon">🌱</div>
+                            <div class="feature-title">Sustainable Sourcing</div>
+                            <div class="feature-description">Direct trade with ethical farmers</div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">🔥</div>
+                            <div class="feature-title">Expert Roasting</div>
+                            <div class="feature-description">Small-batch artisan roasting</div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">☕</div>
+                            <div class="feature-title">Perfect Brewing</div>
+                            <div class="feature-description">Precision extraction methods</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-image-container slide-in-right"></div>
+            </div>
+        </section>
+
+        <section class="stats-section">
+            <div class="stats-container">
+                <div class="stat-item fade-in">
+                    <div class="stat-number">500+</div>
+                    <div class="stat-label">Happy Customers</div>
+                </div>
+                <div class="stat-item fade-in">
+                    <div class="stat-number">25+</div>
+                    <div class="stat-label">Coffee Varieties</div>
+                </div>
+                <div class="stat-item fade-in">
+                    <div class="stat-number">5★</div>
+                    <div class="stat-label">Average Rating</div>
+                </div>
+                <div class="stat-item fade-in">
+                    <div class="stat-number">10+</div>
+                    <div class="stat-label">Awards Won</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <a href="#top" class="back-to-top" aria-label="Back to top">↑</a>
+
+    <!-- Login Modal -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2>Welcome Back</h2>
+                <button class="modal-close" id="closeLoginModal">&times;</button>
+            </div>
+            <form class="auth-form" id="loginForm">
+                <div class="form-group">
+                    <input type="email" id="loginEmail" name="email" placeholder=" " required>
+                    <label for="loginEmail">Email Address</label>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="loginPassword" name="password" placeholder=" " required>
+                    <label for="loginPassword">Password</label>
+                </div>
+                <div class="form-options">
+                    <a href="#" class="forgot-password" id="forgotPasswordBtn">Forgot Password?</a>
+                </div>
+                <button type="submit" class="auth-submit-btn">
+                    <span>Sign In</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10,17 15,12 10,7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+                </button>
+                <div class="auth-divider">
+                    <span>or</span>
+                </div>
+                <button type="button" class="social-auth-btn google-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+                    Continue with Google
+                </button>
+                <div class="auth-switch">
+                    <p>Don't have an account? <a href="#" id="switchToSignup">Sign up</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div class="modal-overlay" id="signupModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2>Join Park-Time Coffee</h2>
+                <button class="modal-close" id="closeSignupModal">&times;</button>
+            </div>
+            <form class="auth-form" id="signupForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <input type="text" id="signupFirstName" name="firstName" placeholder=" " required>
+                        <label for="signupFirstName">First Name</label>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="signupLastName" name="lastName" placeholder=" " required>
+                        <label for="signupLastName">Last Name</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input type="email" id="signupEmail" name="email" placeholder=" " required>
+                    <label for="signupEmail">Email Address</label>
+                </div>
+                <div class="form-group">
+                    <input type="tel" id="signupPhone" name="phone" placeholder=" ">
+                    <label for="signupPhone">Phone Number (Optional)</label>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="signupPassword" name="password" placeholder=" " required>
+                    <label for="signupPassword">Password</label>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="signupConfirmPassword" name="confirmPassword" placeholder=" " required>
+                    <label for="signupConfirmPassword">Confirm Password</label>
+                </div>
+                <div class="form-options">
+                    <label class="checkbox-container">
+                        <input type="checkbox" name="terms" required>
+                        <span class="checkmark"></span>
+                        I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+                    </label>
+                </div>
+                <button type="submit" class="auth-submit-btn">
+                    <span>Create Account</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="m22 21-2-2"/><path d="M16 16h6"/></svg>
+                </button>
+                <div class="auth-divider">
+                    <span>or</span>
+                </div>
+                <button type="button" class="social-auth-btn google-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+                    Sign up with Google
+                </button>
+                <div class="auth-switch">
+                    <p>Already have an account? <a href="#" id="switchToLogin">Sign in</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div class="modal-overlay" id="forgotPasswordModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2>Reset Password</h2>
+                <button class="modal-close" id="closeForgotPasswordModal">&times;</button>
+            </div>
+            <form class="auth-form" id="forgotPasswordForm">
+                <p class="form-description">Enter your email address and we'll send you a link to reset your password.</p>
+                <div class="form-group">
+                    <input type="email" id="forgotPasswordEmail" name="email" placeholder=" " required>
+                    <label for="forgotPasswordEmail">Email Address</label>
+                </div>
+                <button type="submit" class="auth-submit-btn">
+                    <span>Send Reset Link</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="m22 2-7 20-4-9-9-4z"/></svg>
+                </button>
+                <div class="auth-switch">
+                    <p>Remember your password? <a href="#" id="backToLogin">Sign in</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-col">
+                <h4>About Park-Time</h4>
+                <p>Crafting exceptional coffee experiences where passion meets precision. Every cup tells a story of quality, sustainability, and the art of perfect brewing. Join us for a moment of pure coffee indulgence.</p>
+                <div class="footer-social">
+                    <a href="#" aria-label="Instagram">📷</a>
+                    <a href="#" aria-label="Facebook">📘</a>
+                    <a href="#" aria-label="Twitter">🐦</a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="menu.html">Our Menu</a></li>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="#">Loyalty Program</a></li>
+                    <li><a href="#">Gift Cards</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Services</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Dine In</a></li>
+                    <li><a href="#">Takeaway</a></li>
+                    <li><a href="#">Coffee Catering</a></li>
+                    <li><a href="#">Private Events</a></li>
+                    <li><a href="#">Corporate Orders</a></li>
+                    <li><a href="#">Barista Training</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Connect</h4>
+                <p>📍 148 Pulo, Cabuyao, Laguna</p>
+                <p>📞 (346) 984-7843</p>
+                <p>📞 (143) 743-1497</p>
+                <p>✉️ hello@itsparktime.coffee</p>
+                <p>🕐 Mon-Sun: 6:00 AM - 10:00 PM</p>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            <p>&copy; 2024 Park-Time Coffee. All rights reserved. | Crafted with ❤️ and ☕ in Laguna, Philippines</p>
+        </div>
+    </footer>
+
+    
+</body>
+</html>
